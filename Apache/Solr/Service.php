@@ -116,7 +116,7 @@ class Apache_Solr_Service
 	 *
 	 * @var string
 	 */
-	protected $_host, $_port, $_path;
+	protected $_proto="http",$_host, $_port, $_path;
 
 	/**
 	 * Whether {@link Apache_Solr_Response} objects should create {@link Apache_Solr_Document}s in
@@ -290,7 +290,7 @@ class Apache_Solr_Service
 			$queryString = '';
 		}
 
-		return 'http://' . $this->_host . ':' . $this->_port . $this->_path . $servlet . $queryString;
+		return  $this->_proto . '://' . $this->_host . ':' . $this->_port . $this->_path . $servlet . $queryString;
 	}
 
 	/**
@@ -384,6 +384,41 @@ class Apache_Solr_Service
 		return $solrResponse;
 	}
 
+        /**
+	 * Returns the set host
+	 *
+	 * @return string
+	 */
+	public function getProto()
+	{
+		return $this->_proto;
+	}
+
+	/**
+	 * Set the http protocol used.
+	 *
+	 * @param string $proto
+	 *
+	 * @throws Apache_Solr_InvalidArgumentException If the host parameter is empty
+	 */
+	public function setProto($proto)
+	{
+		//Use the provided host or use the default
+		if ($proto !== "http" || $proto !== "https")
+		{
+			throw new Apache_Solr_InvalidArgumentException('Proto parameter must be http or https');
+		}
+		else
+		{
+			$this->_proto = $proto;
+		}
+                
+		if ($this->_urlsInited)
+		{
+			$this->_initUrls();
+		}
+	}
+        
 	/**
 	 * Returns the set host
 	 *
